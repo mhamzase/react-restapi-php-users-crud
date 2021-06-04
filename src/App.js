@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NotFound from "./components/NotFound";
+import UserDetails from "./components/UserDetails";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/users-list" component={UsersList} />
           <Route exact path="/add-user" component={AddUser} />
+          <Route exact path="/user/:id" component={UserDetails} />
           <Route component={NotFound} />
         </Switch>
       </Router>

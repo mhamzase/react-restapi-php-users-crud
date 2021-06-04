@@ -21,13 +21,33 @@ function UsersList() {
             }).finally(() => {
                 setLoading(false);
             });
-
     }, []);
 
+    const removeUser = (user_id) =>{
+        // filter outing user
+        let userDeleted = allusers.filter((user) => {return user[0] !== user_id })
 
-    const removeUser = (id) =>{
-        console.log(id)
-    }
+        fetch("http://localhost/react-restapi-php-user-crud/delete-user.php", {
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json",
+              },
+            body: JSON.stringify({id : user_id})
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+              setAllusers(userDeleted);
+            // fetchUsers()
+              console.log(data.msg)
+            } else {
+              alert(data.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    };
     
     return (
         <div>
@@ -42,7 +62,7 @@ function UsersList() {
                 </thead>
                 <tbody>
                  
-                    {error || !Array.isArray(allusers) ? <tr><td colSpan="3">There was an error loading your data!.</td></tr> : null}
+                    {allusers.length==0 ? <tr><td colSpan="3">No Record Found!.</td></tr> : null}
 
                     {loading ? <tr><td colSpan="3">Records are loading...</td></tr> :
                         (allusers.map((user, index) => (
@@ -52,7 +72,7 @@ function UsersList() {
                                 <td style={{ fontSize: '24px' }}>
 
                                     <OverlayTrigger overlay={<Tooltip >View</Tooltip>}>
-                                        <Link className="ml-3 text-success" to={`/user/${user.id}`}><FaEye /></Link>
+                                        <Link className="ml-3 text-success" to={`/user/${user[0]}`}><FaEye /></Link>
                                     </OverlayTrigger>
 
                                     <OverlayTrigger overlay={<Tooltip >Edit</Tooltip>}>
