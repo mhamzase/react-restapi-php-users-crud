@@ -59,26 +59,7 @@ function UsersList() {
     };
 
 
-    const enableEdit = (id, name, age) => {
-        // console.log(id, name, age)
-        setNewData({ id, name, age });
-        editMode(id);
-    }
-
-    // Enabling the edit mode for a listed user.
-    const editMode = (id) => {
-        const tempUsers = allusers.map((user) => {
-            if (user[0] === id) {
-                user.isEditing = true;
-                return user;
-            }
-            else {
-                user.isEditing = false;
-                return user;
-            }
-        });
-        setAllusers(tempUsers);
-    };
+    
 
     return (
         <div>
@@ -96,50 +77,29 @@ function UsersList() {
                     {allusers.length == 0 ? <tr><td colSpan="3">No Record Found!.</td></tr> : null}
 
                     {loading ? <tr><td colSpan="3">Records are loading...</td></tr> :
-                        (allusers.map((user,isEditing) => {
+                        (allusers.map((user) =>
+                        (
+                            <tr key={user[0]}>
+                                <td>{user[1]}</td>
+                                <td>{user[2]}</td>
+                                <td style={{ fontSize: '24px' }}>
 
-                            return isEditing === true ? (
-                                <tr key={user[0]}>
-                                    <td>
-                                        <input
-                                            type="text"
-                                            defaultValue={user[1]}
-                                        // onChange={(e) => updateNewData(e, "fullname")}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="email"
-                                            defaultValue={user[2]}
-                                        // onChange={(e) => updateNewData(e, "age")}
-                                        />
-                                    </td>
-                                </tr>
-                            )
-                                :
-                                (
-                                    <tr key={user[0]}>
-                                        <td>{user[1]}</td>
-                                        <td>{user[2]}</td>
-                                        <td style={{ fontSize: '24px' }}>
+                                    <OverlayTrigger overlay={<Tooltip >View</Tooltip>}>
+                                        <Link className="ml-3 text-success" to={`/user/${user[0]}`}><FaEye /></Link>
+                                    </OverlayTrigger>
 
-                                            <OverlayTrigger overlay={<Tooltip >View</Tooltip>}>
-                                                <Link className="ml-3 text-success" to={`/user/${user[0]}`}><FaEye /></Link>
-                                            </OverlayTrigger>
-
-                                            <OverlayTrigger overlay={<Tooltip >Edit</Tooltip>}>
-                                                <span className="ml-3 text-primary" onClick={() => enableEdit(user[0], user[1], user[2])}><FaUserEdit /></span>
-                                            </OverlayTrigger>
+                                    <OverlayTrigger overlay={<Tooltip >Edit</Tooltip>}>
+                                        <Link className="ml-3 text-primary" to={`/edit-user/${user[0]}`}><FaUserEdit /></Link>
+                                    </OverlayTrigger>
 
 
 
-                                            <OverlayTrigger overlay={<Tooltip >Remove</Tooltip>}>
-                                                <span role="button" className="ml-3 text-danger " onClick={() => deleteConfirm(user[0])} ><FaTrashAlt /></span>
-                                            </OverlayTrigger>
-                                        </td>
-                                    </tr>
-                                )
-                        }
+                                    <OverlayTrigger overlay={<Tooltip >Remove</Tooltip>}>
+                                        <span role="button" className="ml-3 text-danger " onClick={() => deleteConfirm(user[0])} ><FaTrashAlt /></span>
+                                    </OverlayTrigger>
+                                </td>
+                            </tr>
+                        )
                         ))
 
                     }

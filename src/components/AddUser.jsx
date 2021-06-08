@@ -37,7 +37,7 @@ function AddUser() {
             });
 
         history.push("/users-list");
-        // document.getElementById("user-form").reset()
+        document.getElementById("user-form").reset()
     }
 
 
