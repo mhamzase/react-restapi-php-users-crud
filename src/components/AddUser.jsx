@@ -1,24 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 
+
+
+
 function AddUser() {
-    let [message, setMessage] = useState('')
-    let [showMessage, setShowMessage] = useState(false);
 
     const [userData, setUserData] = useState({
         fullname: '',
         age: ''
     })
 
+    const [success, setSuccess] = useState()
 
     let history = useHistory();
+
     const { fullname, age } = userData;
 
     const handleUserInput = (e) => {
         setUserData({ ...userData, [e.target.name]: e.target.value })
     }
+
 
     const handleSubmitForm = async e => {
         e.preventDefault();
@@ -27,26 +31,26 @@ function AddUser() {
         await axios.post("http://localhost/react-restapi-php-user-crud/add-user.php", userData)
             .then((res) => res.json())
             .then((data) => {
-                setMessage(data.msg)
-                setShowMessage(true)
-            
-
+                if (data.success) {
+                    console.log(data.msg)
+                }
+                else {
+                    console.log(data.msg)
+                }
             })
             .catch((err) => {
                 console.log(err);
             });
 
-        history.push("/users-list");
-        document.getElementById("user-form").reset()
+            history.push("/users-list");
+            
     }
-
 
     return (
         <>
             <div className="mt-5">
                 <div className="col-5 m-auto shadow-lg p-4">
                     <h1 className="display-4 text-center ">Add User</h1>
-                    {showMessage ? message : null}
                     <Form id="user-form" action="" method="POST" onSubmit={(e) => handleSubmitForm(e)}>
                         <Form.Group >
                             <Form.Label>Name</Form.Label>
@@ -61,7 +65,6 @@ function AddUser() {
                         </Form.Group>
                     </Form>
                 </div>
-
             </div>
         </>
     )

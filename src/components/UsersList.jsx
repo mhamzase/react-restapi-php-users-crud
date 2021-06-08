@@ -3,14 +3,13 @@ import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap'
 import { Link } from "react-router-dom";
 import { FaUserEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 
+import { store } from "react-notifications-component";
+
 function UsersList() {
 
     const [allusers, setAllusers] = useState([]);
     const [loading, setLoading] = useState(false);
-    // const [editingMode, setEditingMode] = useState(false);
-    const [error, setError] = useState();
 
-    const [newData, setNewData] = useState({});
 
     useEffect(() => {
         setLoading(true);
@@ -20,11 +19,13 @@ function UsersList() {
                 setAllusers(data.users.reverse());
             })
             .catch((err) => {
-                setError(err)
+                console.log(err)
             }).finally(() => {
                 setLoading(false);
             });
     }, []);
+
+
 
     const removeUser = (user_id) => {
         // filter outing user
@@ -42,7 +43,6 @@ function UsersList() {
                 if (data.success) {
                     setAllusers(userDeleted);
                     // fetchUsers()
-                    console.log(data.msg)
                 } else {
                     alert(data.msg);
                 }
@@ -59,7 +59,7 @@ function UsersList() {
     };
 
 
-    
+
 
     return (
         <div>
@@ -74,33 +74,31 @@ function UsersList() {
                 </thead>
                 <tbody>
 
-                    {allusers.length == 0 ? <tr><td colSpan="3">No Record Found!.</td></tr> : null}
 
                     {loading ? <tr><td colSpan="3">Records are loading...</td></tr> :
-                        (allusers.map((user) =>
-                        (
-                            <tr key={user[0]}>
-                                <td>{user[1]}</td>
-                                <td>{user[2]}</td>
-                                <td style={{ fontSize: '24px' }}>
+                        allusers.length == 0 ? <tr><td colSpan="3">No Record Found!</td></tr> :
+                            (allusers.map((user) => (
+                                <tr key={user[0]}>
+                                    <td>{user[1]}</td>
+                                    <td>{user[2]}</td>
+                                    <td style={{ fontSize: '24px' }}>
 
-                                    <OverlayTrigger overlay={<Tooltip >View</Tooltip>}>
-                                        <Link className="ml-3 text-success" to={`/user/${user[0]}`}><FaEye /></Link>
-                                    </OverlayTrigger>
+                                        <OverlayTrigger overlay={<Tooltip >View</Tooltip>}>
+                                            <Link className="ml-3 text-success" to={`/user/${user[0]}`}><FaEye /></Link>
+                                        </OverlayTrigger>
 
-                                    <OverlayTrigger overlay={<Tooltip >Edit</Tooltip>}>
-                                        <Link className="ml-3 text-primary" to={`/edit-user/${user[0]}`}><FaUserEdit /></Link>
-                                    </OverlayTrigger>
+                                        <OverlayTrigger overlay={<Tooltip >Edit</Tooltip>}>
+                                            <Link className="ml-3 text-primary" to={`/edit-user/${user[0]}`}><FaUserEdit /></Link>
+                                        </OverlayTrigger>
 
 
 
-                                    <OverlayTrigger overlay={<Tooltip >Remove</Tooltip>}>
-                                        <span role="button" className="ml-3 text-danger " onClick={() => deleteConfirm(user[0])} ><FaTrashAlt /></span>
-                                    </OverlayTrigger>
-                                </td>
-                            </tr>
-                        )
-                        ))
+                                        <OverlayTrigger overlay={<Tooltip >Remove</Tooltip>}>
+                                            <span role="button" className="ml-3 text-danger " onClick={() => deleteConfirm(user[0])} ><FaTrashAlt /></span>
+                                        </OverlayTrigger>
+                                    </td>
+                                </tr>
+                            )))
 
                     }
                 </tbody>

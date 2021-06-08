@@ -15,7 +15,6 @@ function App() {
     <>
       <Router>
         <Header />
-
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/users-list" component={UsersList} />

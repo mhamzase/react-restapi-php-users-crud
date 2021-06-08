@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react'
-import { useParams,useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
+import axios from 'axios'
+import { Form } from 'react-bootstrap'
+
+import { store } from "react-notifications-component";
 
 function EditUser() {
 
     const [user, setUser] = useState({
+        id: '',
         fullname: '',
         age: ''
     })
+    const [success, setSuccess] = useState(false)
+
+
+    const handleUserInput = (e) => {
+        setUser({ ...user, [e.target.name]: e.target.value })
+    }
+
 
     const { id } = useParams();
-
     let history = useHistory();
 
 
@@ -30,7 +41,8 @@ function EditUser() {
             })
             .then((data) => {
                 setUser({
-                    fullname:data.user[0][1],
+                    id: id,
+                    fullname: data.user[0][1],
                     age: data.user[0][2]
                 })
             })
@@ -39,10 +51,34 @@ function EditUser() {
             });
     }
 
-    const updateUser = (e) =>{
+    
+    const updateUser = async (e) => {
         e.preventDefault();
 
-        history.push("/users-list")
+
+        fetch("http://localhost/react-restapi-php-user-crud/update-user.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user),
+        })
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                if (data.success) {
+                    // setSuccess(true)
+                } else {
+                    console.log(data.msg);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+            history.push("/users-list")
+        
     }
 
     return (
@@ -50,11 +86,11 @@ function EditUser() {
             <h1 className="display-4">Edit user ID: <b>{id}</b></h1>
             <hr />
             <ul className="list-group w-50">
-                <form action="" method="post" onSubmit={(e) => updateUser(e)}>
-                    <li className="list-group-item"><b>Name :</b> <input type="text" className="form-control" name="name" value={user.fullname} /> </li>
-                    <li className="list-group-item"><b>Age :</b> <input type="text" className="form-control" name="age" value={user.age} /></li>
-                    <li className="list-group-item"><button type="submit" className="form-control bg-primary text-light" name="updateUser">Updte</button> </li>
-                </form>
+                <Form action="" method="post" onSubmit={(e) => updateUser(e)}>
+                    <li className="list-group-item"><b>Name :</b> <input onChange={(e) => handleUserInput(e)} type="text" className="form-control" name="fullname" value={user.fullname} /> </li>
+                    <li className="list-group-item"><b>Age :</b> <input onChange={(e) => handleUserInput(e)} type="text" className="form-control" name="age" value={user.age} /></li>
+                    <li className="list-group-item"><button type="submit" className="form-control bg-primary text-light">Updte</button> </li>
+                </Form>
             </ul>
         </div>
     )
